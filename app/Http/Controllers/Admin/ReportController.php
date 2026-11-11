@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Constants\PaymentMethod;
 use App\Http\Controllers\Controller;
 use App\Models\OrderItem;
 use App\Models\Payment;
+use App\Support\CsvExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
@@ -12,6 +14,63 @@ use Illuminate\Validation\Rule;
 class ReportController extends Controller
 {
     public function index(Request $request)
+    {
+        return view('report.index', $this->siapkan($request));
+    }
+
+    public function export(Request $request)
+    {
+        $d = $this->siapkan($request);
+
+        $baris = [
+            ['Laporan penjualan ' . $d['jenis'], $d['judul']],
+            ['Jumlah pesanan', $d['jumlahPesanan']],
+            ['Total penjualan', (int) $d['totalPenjualan']],
+            [],
+            ['Menu terlaris'],
+            ['No', 'Menu', 'Terjual', 'Omzet'],
+        ];
+
+        foreach ($d['menuTerlaris'] as $i => $menu) {
+            $baris[] = [$i + 1, $menu->menu_name, (int) $menu->jumlah, (int) $menu->omzet];
+        }
+
+        $baris[] = [];
+
+        if ($d['jenis'] === 'harian') {
+            $baris[] = ['Transaksi'];
+            $baris[] = ['Jam', 'No. Pesanan', 'Metode', 'Nominal'];
+
+            foreach ($d['daftar'] as $p) {
+                $baris[] = [
+                    $p->paid_at->format('H:i'),
+                    $p->order->order_number,
+                    PaymentMethod::label($p->payment_method),
+                    (int) $p->amount,
+                ];
+            }
+
+            $namaFile = 'laporan-harian-' . $d['nilaiTanggal'] . '.csv';
+        } else {
+            $baris[] = ['Rekap per hari'];
+            $baris[] = ['Tanggal', 'Jumlah pesanan', 'Total penjualan'];
+
+            foreach ($d['perHari'] as $hari) {
+                $baris[] = [
+                    Carbon::parse($hari->tanggal)->format('Y-m-d'),
+                    (int) $hari->jumlah_pesanan,
+                    (int) $hari->total,
+                ];
+            }
+
+            $namaFile = 'laporan-bulanan-' . $d['nilaiBulan'] . '.csv';
+        }
+
+        return CsvExport::unduh($namaFile, $baris);
+    }
+
+    // semua perhitungan laporan ada di sini, dipakai halaman dan CSV
+    private function siapkan(Request $request): array
     {
         $request->validate([
             'jenis' => ['nullable', Rule::in(['harian', 'bulanan'])],
@@ -64,7 +123,7 @@ class ReportController extends Controller
                 ->get();
         }
 
-        return view('report.index', [
+        return [
             'jenis' => $jenis,
             'judul' => $judul,
             'nilaiTanggal' => $awal->toDateString(),
@@ -74,6 +133,6 @@ class ReportController extends Controller
             'menuTerlaris' => $menuTerlaris,
             'daftar' => $daftar,
             'perHari' => $perHari,
-        ]);
+        ];
     }
 }

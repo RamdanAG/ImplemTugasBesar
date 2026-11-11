@@ -139,6 +139,8 @@ h2 { font-size: 16px; margin: 24px 0 8px; }
 .tab { display: inline-block; padding: 6px 14px; border: 1px solid #111; color: #111; text-decoration: none; margin-right: 4px; }
 .tab.aktif { background: #111; color: #fff; }
 .catatan { font-size: 13px; color: #666; margin-top: 24px; }
+.unduh { display: inline-block; padding: 7px 14px; border: 1px solid #111; color: #111; text-decoration: none; background: #fff; }
+.unduh:hover { background: #111; color: #fff; }
 
     </style>
 </head>

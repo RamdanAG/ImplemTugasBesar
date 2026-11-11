@@ -9,6 +9,8 @@ use App\Http\Controllers\Customer\PaymentController;
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('transactions/export', [TransactionController::class, 'export'])->name('transactions.export');
+Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
 });
 
 // rute pembayaran pelanggan ditambah di Tahap 2

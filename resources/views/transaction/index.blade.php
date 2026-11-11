@@ -30,7 +30,9 @@
         <button type="submit">Terapkan</button>
         <a href="{{ route('admin.transactions.index') }}">Reset</a>
     </form>
-
+    <p>
+        <a class="unduh" href="{{ route('admin.transactions.export', request()->except('page')) }}">Unduh CSV</a>
+    </p>
     <div class="ringkasan">
         <div>
             <span>Jumlah transaksi</span>
