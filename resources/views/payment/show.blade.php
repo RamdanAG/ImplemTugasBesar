@@ -54,7 +54,12 @@
                 Setelah itu tekan tombol Bayar.
             </div>
 
-            <button type="submit">Bayar Rp {{ number_format($order->total_amount, 0, ',', '.') }}</button>
+            <button type="submit" name="hasil" value="berhasil" id="tombol-bayar">
+                Bayar Rp {{ number_format($order->total_amount, 0, ',', '.') }}
+            </button>
+            <button type="submit" name="hasil" value="gagal" class="sekunder">
+                Simulasikan pembayaran gagal
+            </button>
         </form>
 
         <script>
@@ -67,6 +72,17 @@
                     });
                     document.getElementById('instruksi-' + radio.value).style.display = 'block';
                 });
+            });
+
+                        // matikan tombol setelah diklik supaya tidak terkirim dua kali
+            var form = document.querySelector('form');
+            form.addEventListener('submit', function () {
+                // pakai setTimeout supaya nilai tombol tetap ikut terkirim
+                setTimeout(function () {
+                    form.querySelectorAll('button').forEach(function (tombol) {
+                        tombol.disabled = true;
+                    });
+                }, 0);
             });
         </script>
     @endif
