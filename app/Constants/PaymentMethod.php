@@ -11,4 +11,9 @@ class PaymentMethod
     {
         return [self::QRIS, self::BANK_TRANSFER];
     }
+
+    public static function label(string $metode): string
+    {
+        return $metode === self::QRIS ? 'QRIS' : 'Transfer bank';
+    }
 }
