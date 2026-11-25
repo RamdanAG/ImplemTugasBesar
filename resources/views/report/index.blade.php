@@ -10,6 +10,7 @@
     @endif
 
     <p>
+        <a href="">Ini Test</a>
         <a href="{{ route('admin.reports.index', ['jenis' => 'harian']) }}"
            class="tab {{ $jenis === 'harian' ? 'aktif' : '' }}">Harian</a>
         <a href="{{ route('admin.reports.index', ['jenis' => 'bulanan']) }}"
